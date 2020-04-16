@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 
 import logo from './assets/sword.svg';
@@ -9,12 +9,41 @@ const Logo = styled.img`
 `;
 
 function App() {
+	const urlInputRef = useRef(null);
+	const [summary, setSummary] = useState(null);
+	const [articleText, setArticleText] = useState(null);
+	useEffect(() => {}, []);
+
+	const handleSearchUrl = useCallback(async (e) => {
+		const urlValue = urlInputRef.current.value;
+		const response = await fetch('/api/extract', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				url: urlValue
+			})
+		});
+		const { summary, text } = await response.json();
+		setSummary(summary);
+		setArticleText(text);
+	}, []);
+
 	return (
 		<div className='App'>
 			<header className='App-header'>
 				<Logo src={logo} alt='logo' />
 				<p>Project Ares</p>
+				<input ref={urlInputRef} placeholder='write article url' />
+				<button onClick={handleSearchUrl}>Search</button>
 			</header>
+			<div>
+				<div>summary</div>
+				<p>{summary}</p>
+				<div>text</div>
+				<p>{articleText}</p>
+			</div>
 		</div>
 	);
 }
