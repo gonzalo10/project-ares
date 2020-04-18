@@ -56,10 +56,7 @@ const AvatarWrapper = styled.div`
 `;
 
 const routes = {
-	overview: 'Summary',
-	projects: 'Projects',
-	integrations: 'Integrations',
-	activity: 'Activity'
+	overview: 'Summary'
 };
 
 const MainNavbar = () => {
@@ -73,17 +70,13 @@ const AvatarButton = () => {
 	return <AvatarWrapper></AvatarWrapper>;
 };
 const SubNavbar = () => {
-	// const router = useRouter();
-	// const routeInUse = router.pathname.split('/')[1];
 	return (
 		<NavbarWrapper>
 			{Object.keys(routes).map((route) => {
 				const isActive = false;
 				return (
 					<NavItem isActive={isActive} key={route}>
-						{/* <Link href={`/${route}`}> */}
 						<Title isActive={isActive}>{routes[route]}</Title>
-						{/* </Link> */}
 					</NavItem>
 				);
 			})}
