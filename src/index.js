@@ -3,19 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { ThemeProvider } from 'styled-components';
-
-const theme = {
-	primary: 'green',
-	yellow: '#f0c419',
-	yellowLight: '#f0c41938'
-};
+import { ThemeManager } from './ThemeManager';
+const currentTheme = localStorage.getItem('theme')
+	? localStorage.getItem('theme')
+	: null;
 
 ReactDOM.render(
 	<React.StrictMode>
-		<ThemeProvider theme={theme}>
+		<ThemeManager>
 			<App />
-		</ThemeProvider>
+		</ThemeManager>
 	</React.StrictMode>,
 	document.getElementById('root')
 );

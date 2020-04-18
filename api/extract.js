@@ -33,15 +33,15 @@ module.exports = (req, res) => {
 
 	request(url, (err, nores, body) => {
 		const extractedWebText = extractor(body, 'en');
-		// MockSummary(extractedWebText.text).then((data) => {
-		// 	res.statusCode = 200;
-		// 	res.setHeader('Content-Type', 'application/json');
-		// 	res.end(JSON.stringify({ ...data, ...extractedWebText }));
-		// });
-		getSummary(extractedWebText.text).then((data) => {
+		MockSummary(extractedWebText.text).then((data) => {
 			res.statusCode = 200;
 			res.setHeader('Content-Type', 'application/json');
 			res.end(JSON.stringify({ ...data, ...extractedWebText }));
 		});
+		// getSummary(extractedWebText.text).then((data) => {
+		// 	res.statusCode = 200;
+		// 	res.setHeader('Content-Type', 'application/json');
+		// 	res.end(JSON.stringify({ ...data, ...extractedWebText }));
+		// });
 	});
 };

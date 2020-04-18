@@ -17,7 +17,7 @@ const SearchWrapper = styled.div`
 	align-items: center;
 	background: white;
 	position: relative;
-	border-bottom: 1px solid #eaeaea;
+	border-bottom: 1px solid ${(props) => props.theme.greyLight};
 `;
 const ResultsWrapper = styled.div`
 	height: 100%;
@@ -34,10 +34,6 @@ const SearchPositiones = styled.div`
 const PrefixTitle = styled.span`
 	color: ${(props) => props.theme.yellow};
 `;
-const SummarizedText = styled.span`
-	white-space: pre-line;
-	line-height: 2em;
-`;
 const LoadingWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -47,10 +43,6 @@ const LoadingWrapper = styled.div`
 const LoadingLabel = styled.span`
 	margin: 10px;
 `;
-const CardContent = styled.div`
-	padding: 30px;
-	max-width: 700px;
-`;
 const Title = styled.span`
 	border-bottom: 1px solid ${(props) => props.theme.yellow};
 	text-transform: uppercase;
@@ -58,12 +50,54 @@ const Title = styled.span`
 	letter-spacing: 4px;
 	font-size: 1.7rem;
 	user-select: none;
+	${(props) => console.log(props.theme)}
 `;
-const Home = (props) => {
+
+const CardContent = styled.div`
+	padding: 15px 30px 15px;
+	max-width: 700px;
+`;
+const CardHeader = styled.div`
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid ${(props) => props.theme.greyLight};
+	margin: 0px 30px;
+	padding: 0px 0px 15px;
+	justify-content: center;
+`;
+const CardBody = styled.div`
+	display: flex;
+	flex-direction: column;
+	overflow: scroll;
+	max-height: 60vh;
+	padding-top: 15px;
+`;
+const SummarizedText = styled.p`
+	line-height: 1.8em;
+	margin: 0;
+	margin-bottom: 12px;
+	text-align: justify;
+`;
+const ArticleTitle = styled.span`
+	text-align: center;
+`;
+const ReadingTime = styled.span`
+	text-align: end;
+`;
+
+const getAverageReadingTime = (words) => {
+	const WPM = 200;
+	const averageReadingTime = words.length / WPM;
+	const minutes = Math.ceil(averageReadingTime);
+	return `${minutes} min`;
+};
+
+const Home = () => {
 	const urlInputRef = useRef(null);
 	const [summary, setSummary] = useState(null);
 	const [isLoading, setLoading] = useState(false);
-	const [articleText, setArticleText] = useState(null);
+	const [articleMeta, setArticleMeta] = useState(null);
+	const [readingTime, setReadingTime] = useState(null);
 	useEffect(() => {}, []);
 
 	const handleSearchUrl = useCallback(async (e) => {
@@ -78,9 +112,11 @@ const Home = (props) => {
 				url: urlValue
 			})
 		});
-		const { summary, text } = await response.json();
-		setSummary(summary);
-		setArticleText(text);
+		const { summary, ...rest } = await response.json();
+		const words = rest.text.split(' ');
+		setReadingTime(getAverageReadingTime(words));
+		setSummary(summary.split('.'));
+		setArticleMeta(rest);
 	}, []);
 	const handleKeyDown = useCallback((e) => {
 		const { keyCode } = e;
@@ -88,6 +124,7 @@ const Home = (props) => {
 			handleSearchUrl();
 		}
 	}, []);
+
 	return (
 		<HomeWrapper>
 			<SearchWrapper isLoading={isLoading}>
@@ -110,7 +147,16 @@ const Home = (props) => {
 				{summary && (
 					<Card>
 						<CardContent>
-							<SummarizedText>{summary}</SummarizedText>
+							<CardHeader>
+								<ArticleTitle>{articleMeta && articleMeta.title}</ArticleTitle>
+							</CardHeader>
+							<CardBody>
+								{summary.map(
+									(par, index) =>
+										par && <SummarizedText key={index}>{par}.</SummarizedText>
+								)}
+								<ReadingTime>{readingTime}</ReadingTime>
+							</CardBody>
 						</CardContent>
 					</Card>
 				)}

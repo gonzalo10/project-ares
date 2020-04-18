@@ -1,8 +1,7 @@
-// import Link from 'next/link';
 import React from 'react';
 import LogoBase from '../assets/sword.svg';
 import styled from 'styled-components';
-// import { useRouter } from 'next/router';
+import Toggle from './Toggle';
 
 const Logo = styled.img`
 	width: 35px;
@@ -48,13 +47,6 @@ const Title = styled.span`
 	font-weight: 400;
 `;
 
-const AvatarWrapper = styled.div`
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	background-color: ${(props) => props.theme.yellow};
-`;
-
 const routes = {
 	overview: 'Summary'
 };
@@ -66,9 +58,7 @@ const MainNavbar = () => {
 		</NavbarWrapper>
 	);
 };
-const AvatarButton = () => {
-	return <AvatarWrapper></AvatarWrapper>;
-};
+
 const SubNavbar = () => {
 	return (
 		<NavbarWrapper>
@@ -88,7 +78,7 @@ const Header = () => (
 	<Nav>
 		<MainNavbar></MainNavbar>
 		<SubNavbar />
-		<AvatarButton />
+		<Toggle />
 	</Nav>
 );
 
