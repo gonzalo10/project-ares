@@ -4,9 +4,6 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { ThemeManager } from './ThemeManager';
-const currentTheme = localStorage.getItem('theme')
-	? localStorage.getItem('theme')
-	: null;
 
 ReactDOM.render(
 	<React.StrictMode>

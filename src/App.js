@@ -29,7 +29,7 @@ const themes = {
 function App() {
 	const theme = useTheme();
 	return (
-		<ThemeProvider theme={themes[theme.mode]}>
+		<ThemeProvider theme={themes[theme.mode] || themes.light}>
 			<Header />
 			<Body />
 		</ThemeProvider>

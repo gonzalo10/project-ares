@@ -8,6 +8,7 @@ const HomeWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
+	${(props) => console.log(props.theme)}
 `;
 const SearchWrapper = styled.div`
 	height: ${(props) =>

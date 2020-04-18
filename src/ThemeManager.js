@@ -11,7 +11,7 @@ export const useTheme = () => React.useContext(ManageThemeContext);
 
 export const ThemeManager = ({ children }) => {
 	const [themeState, setThemeState] = React.useState({
-		mode: localStorage.getItem('theme')
+		mode: localStorage.getItem('theme') || 'light'
 	});
 
 	useEffect(() => {
