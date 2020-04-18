@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 const CardWrapper = styled.div`
 	min-height: 100px;
-	max-width: 300px;
 	width: 100%;
 	border: 1px solid transparent;
 	border-radius: 10px;
@@ -14,7 +13,6 @@ const Container = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 100%;
 `;
 
 const Card = ({ children }) => (
