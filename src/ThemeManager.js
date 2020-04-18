@@ -4,7 +4,7 @@ const defaultMode = 'dark';
 
 export const ManageThemeContext = React.createContext({
 	mode: defaultMode,
-	toggle: () => console.log('theme')
+	toggle: () => {}
 });
 
 export const useTheme = () => React.useContext(ManageThemeContext);

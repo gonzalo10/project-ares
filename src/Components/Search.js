@@ -13,7 +13,7 @@ const InputWrapper = styled.div`
 	border-radius: 24px;
 	height: 44px;
 	margin: 0 auto;
-	width: 482px;
+	width: 100%;
 	border-color: rgba(223, 225, 229, 0);
 	box-shadow: 0 1px 6px 0 rgba(32, 33, 36, 0.28);
 	background-color: ${(props) => props.theme.backgroundDarker};
@@ -25,7 +25,7 @@ const Input = styled.input`
 	background-color: transparent;
 	border: none;
 	margin: 0;
-	padding: 0;
+	padding-right: 20px;
 	color: rgba(0, 0, 0, 0.87);
 	word-wrap: break-word;
 	outline: none;
@@ -45,7 +45,8 @@ const SearchWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	position: relative;
-	width: 482px;
+	width: 40vw;
+	max-width: 482px;
 	margin: auto;
 `;
 

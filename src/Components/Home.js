@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import Search from './Search';
 import Card from './Card';
 import GridLoader from './Loaders/Grid';
+
 const HomeWrapper = styled.div`
 	height: calc(100% - 65px);
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
-	${(props) => console.log(props.theme)}
 `;
 const SearchWrapper = styled.div`
 	height: ${(props) =>
@@ -63,6 +63,7 @@ const CardContent = styled.div`
 	color: ${(props) => props.theme.text};
 	background-color: ${(props) => props.theme.backgroundDarker};
 	transition: background-color 0.2s linear;
+	position: relative;
 `;
 const CardHeader = styled.div`
 	display: flex;
@@ -89,7 +90,17 @@ const ArticleTitle = styled.span`
 	text-align: center;
 `;
 const ReadingTime = styled.span`
-	text-align: end;
+	position: absolute;
+	right: 20px;
+	cursor: pointer;
+	color: ${(props) => props.theme.darkText};
+	&:hover::before {
+		content: 'Original article  ';
+		color: ${(props) => props.theme.text};
+	}
+	&:hover {
+		color: ${(props) => props.theme.text};
+	}
 `;
 
 const getAverageReadingTime = (words) => {
@@ -104,8 +115,8 @@ const Home = () => {
 	const [summary, setSummary] = useState(null);
 	const [isLoading, setLoading] = useState(false);
 	const [articleMeta, setArticleMeta] = useState(null);
-	const [readingTime, setReadingTime] = useState(null);
-	useEffect(() => {}, []);
+	const [articleReadingTime, setArticleReadingTime] = useState(null);
+	const [summaryReadingTime, setSummaryReadingTime] = useState(null);
 
 	const handleSearchUrl = useCallback(async (e) => {
 		const urlValue = urlInputRef.current.value;
@@ -120,16 +131,26 @@ const Home = () => {
 			})
 		});
 		const { summary, ...rest } = await response.json();
-		const words = rest.text.split(' ');
-		setReadingTime(getAverageReadingTime(words));
+		const articleWords = rest.text.split(' ');
+		const summaryWords = summary.split(' ');
+		setArticleReadingTime(getAverageReadingTime(articleWords));
+		setSummaryReadingTime(getAverageReadingTime(summaryWords));
 		setSummary(summary.split('.'));
 		setArticleMeta(rest);
 	}, []);
-	const handleKeyDown = useCallback((e) => {
-		const { keyCode } = e;
-		if (keyCode === 13) {
-			handleSearchUrl();
-		}
+
+	const handleKeyDown = useCallback(
+		(e) => {
+			const { keyCode } = e;
+			if (keyCode === 13) {
+				handleSearchUrl();
+			}
+		},
+		[handleSearchUrl]
+	);
+
+	const handleTimeClick = useCallback((e) => {
+		set;
 	}, []);
 
 	return (
@@ -158,13 +179,15 @@ const Home = () => {
 						<CardContent>
 							<CardHeader>
 								<ArticleTitle>{articleMeta && articleMeta.title}</ArticleTitle>
+								<ReadingTime onClick={handleTimeClick}>
+									{summaryReadingTime}
+								</ReadingTime>
 							</CardHeader>
 							<CardBody>
 								{summary.map(
 									(par, index) =>
 										par && <SummarizedText key={index}>{par}.</SummarizedText>
 								)}
-								<ReadingTime>{readingTime}</ReadingTime>
 							</CardBody>
 						</CardContent>
 					</Card>

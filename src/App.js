@@ -13,7 +13,8 @@ const themes = {
 		background: '#fafafa',
 		backgroundLight: 'white',
 		backgroundDarker: 'white',
-		text: 'black'
+		text: 'black',
+		darkText: '#a5a4a4'
 	},
 	dark: {
 		yellow: '#f0c419',
@@ -22,7 +23,8 @@ const themes = {
 		background: '#26242E',
 		backgroundLight: '#363340',
 		backgroundDarker: '#161625',
-		text: 'white'
+		text: 'white',
+		darkText: '#a5a4a4'
 	}
 };
 
