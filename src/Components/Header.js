@@ -17,9 +17,9 @@ const Nav = styled.div`
 	position: relative;
 	height: 64px;
 	border-bottom: 1px solid #eaeaea;
-	transition: box-shadow 0.2s ease;
+	transition: box-shadow 0.2s ease, background-color 0.2s ease;
 	justify-content: space-between;
-	background-color: white;
+	background-color: ${(props) => props.theme.background};
 `;
 const NavbarWrapper = styled.div`
 	display: flex;
@@ -34,15 +34,12 @@ const NavItem = styled.div`
 	align-items: center;
 	display: flex;
 	margin: 0px 15px;
-	transition: border 0.5s ease;
-	border-bottom: 1px solid
-		${(props) => (props.isActive ? 'black' : 'transparent')};
+	transition: border 0.2s ease;
 `;
 const Title = styled.span`
 	text-decoration: none;
 	font-size: 15px;
-	color: ${(props) => (props.isActive ? 'black' : 'grey')};
-	transition: color 0.5s ease;
+	transition: color 0.2s ease;
 	cursor: pointer;
 	font-weight: 400;
 `;

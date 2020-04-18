@@ -5,21 +5,20 @@ import SearchIcon from '../assets/search.svg';
 const Logo = styled.img`
 	width: 20px;
 	padding: 0px 1px 0px 15px;
+	filter: contrast(0);
 `;
 
 const InputWrapper = styled.div`
-	background: #fff;
 	display: flex;
-	border: 1px solid #dfe1e5;
 	border-radius: 24px;
 	height: 44px;
 	margin: 0 auto;
 	width: 482px;
-	${(props) =>
-		props.isOpen &&
-		'border-bottom-left-radius: 0; border-bottom-right-radius: 0;'}
 	border-color: rgba(223, 225, 229, 0);
 	box-shadow: 0 1px 6px 0 rgba(32, 33, 36, 0.28);
+	background-color: ${(props) => props.theme.backgroundDarker};
+	color: ${(props) => props.theme.text};
+	transition: background-color 0.2s linear;
 `;
 
 const Input = styled.input`
@@ -36,6 +35,11 @@ const Input = styled.input`
 	font-size: 16px;
 	margin-left: 20px;
 	margin-top: 5px;
+	color: ${(props) => props.theme.text};
+	transition: background-color 0.2s linear;
+	::placeholder {
+		color: ${(props) => props.theme.text}fa;
+	}
 `;
 const SearchWrapper = styled.div`
 	display: flex;

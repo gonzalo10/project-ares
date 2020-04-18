@@ -7,7 +7,7 @@ const CardWrapper = styled.div`
 	border: 1px solid transparent;
 	border-radius: 10px;
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
-	background-color: white;
+	overflow: hidden;
 `;
 const Container = styled.div`
 	display: flex;

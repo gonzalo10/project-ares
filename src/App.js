@@ -9,25 +9,30 @@ const themes = {
 		primary: 'green',
 		yellow: '#f0c419',
 		yellowLight: '#f0c41938',
-		greyLight: '#eaeaea'
+		greyLight: '#eaeaea',
+		background: '#fafafa',
+		backgroundLight: 'white',
+		backgroundDarker: 'white',
+		text: 'black'
 	},
 	dark: {
-		primary: 'green',
-		yellow: 'blue',
-		yellowLight: '#f0c41938'
+		yellow: '#f0c419',
+		yellowLight: '#f0c41938',
+		greyLight: '#eaeaea',
+		background: '#26242E',
+		backgroundLight: '#363340',
+		backgroundDarker: '#161625',
+		text: 'white'
 	}
 };
 
 function App() {
 	const theme = useTheme();
-	console.log(theme);
 	return (
-		<>
-			<ThemeProvider theme={themes[theme.mode]}>
-				<Header />
-				<Body />
-			</ThemeProvider>
-		</>
+		<ThemeProvider theme={themes[theme.mode]}>
+			<Header />
+			<Body />
+		</ThemeProvider>
 	);
 }
 

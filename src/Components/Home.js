@@ -10,12 +10,13 @@ const HomeWrapper = styled.div`
 	flex-direction: column;
 `;
 const SearchWrapper = styled.div`
-	height: ${(props) => (props.isLoading ? '20%' : '100%')};
-	transition: height 1s ease-in-out;
+	height: ${(props) =>
+		props.isLoading ? (props.hasSummary ? '0px' : '20%') : '100%'};
+	transition: height 1s ease-in-out, background-color 0.2s linear;
 	justify-content: center;
 	display: flex;
 	align-items: center;
-	background: white;
+	background: ${(props) => props.theme.backgroundLight};
 	position: relative;
 	border-bottom: 1px solid ${(props) => props.theme.greyLight};
 `;
@@ -25,6 +26,8 @@ const ResultsWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	background-color: ${(props) => props.theme.background};
+	transition: background-color 0.2s linear;
 `;
 const SearchPositiones = styled.div`
 	position: absolute;
@@ -44,18 +47,21 @@ const LoadingLabel = styled.span`
 	margin: 10px;
 `;
 const Title = styled.span`
+	color: ${(props) => props.theme.text};
 	border-bottom: 1px solid ${(props) => props.theme.yellow};
 	text-transform: uppercase;
 	font-weight: 600;
 	letter-spacing: 4px;
 	font-size: 1.7rem;
 	user-select: none;
-	${(props) => console.log(props.theme)}
 `;
 
 const CardContent = styled.div`
 	padding: 15px 30px 15px;
 	max-width: 700px;
+	color: ${(props) => props.theme.text};
+	background-color: ${(props) => props.theme.backgroundDarker};
+	transition: background-color 0.2s linear;
 `;
 const CardHeader = styled.div`
 	display: flex;
@@ -127,10 +133,12 @@ const Home = () => {
 
 	return (
 		<HomeWrapper>
-			<SearchWrapper isLoading={isLoading}>
-				<Title>
-					Summary <PrefixTitle>Magic</PrefixTitle>
-				</Title>
+			<SearchWrapper isLoading={isLoading} hasSummary={summary}>
+				{!summary && (
+					<Title>
+						Summary <PrefixTitle>Magic</PrefixTitle>
+					</Title>
+				)}
 				<SearchPositiones>
 					<Search ref={urlInputRef} onKeyDown={handleKeyDown} />
 				</SearchPositiones>
