@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-
+import Header from './Components/Header';
 import logo from './assets/sword.svg';
 import './App.css';
 
@@ -31,14 +31,11 @@ function App() {
 	}, []);
 
 	return (
-		<div className='App'>
-			<header className='App-header'>
-				<Logo src={logo} alt='logo' />
-				<p>Project Ares</p>
+		<div>
+			<Header />
+			<div>
 				<input ref={urlInputRef} placeholder='write article url' />
 				<button onClick={handleSearchUrl}>Search</button>
-			</header>
-			<div>
 				<div>summary</div>
 				<p>{summary}</p>
 				<div>text</div>
