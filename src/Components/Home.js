@@ -149,9 +149,7 @@ const Home = () => {
 		[handleSearchUrl]
 	);
 
-	const handleTimeClick = useCallback((e) => {
-		set;
-	}, []);
+	const handleTimeClick = useCallback((e) => {}, []);
 
 	return (
 		<HomeWrapper>

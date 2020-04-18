@@ -46,9 +46,7 @@ module.exports = (req, res) => {
 		const WPM = 200;
 		const articleWordLength = articleText.split(' ').length;
 		let ratio = (WPM * 5) / articleWordLength;
-		console.log(ratio);
 		if (ratio < 0.2) ratio = 0.2;
-		console.log(ratio);
 		getSummary(articleText, ratio).then((data) => {
 			res.statusCode = 200;
 			res.setHeader('Content-Type', 'application/json');
