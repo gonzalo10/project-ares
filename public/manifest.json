@@ -13,8 +13,8 @@
 			"sizes": "192x192"
 		},
 		{
-			"src": "sword.svg",
-			"type": "image/svg",
+			"src": "logo512.ong",
+			"type": "image/png",
 			"sizes": "512x512"
 		}
 	],
