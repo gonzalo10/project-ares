@@ -8,12 +8,12 @@
 			"type": "image/svg"
 		},
 		{
-			"src": "sword.svg",
-			"type": "image/svg",
+			"src": "sword192.png",
+			"type": "image/png",
 			"sizes": "192x192"
 		},
 		{
-			"src": "logo512.ong",
+			"src": "sword.png",
 			"type": "image/png",
 			"sizes": "512x512"
 		}

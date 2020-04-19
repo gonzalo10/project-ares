@@ -79,9 +79,13 @@ const CardHeader = styled.div`
 const CardBody = styled.div`
 	display: flex;
 	flex-direction: column;
-	overflow: scroll;
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
 	@media only screen and (max-width: 600px) {
 		max-height: 70vh;
+	}
+	@media only screen and (max-height: 600px) {
+		max-height: 60vh;
 	}
 	max-height: 60vh;
 	padding-top: 15px;
