@@ -1,6 +1,7 @@
 import extractor from 'unfluff';
 import request from 'request';
 import axios from 'axios';
+import db from './db';
 
 const mockLamda = (t) =>
 	Promise.resolve({
@@ -39,15 +40,25 @@ const getSummary = (extractedWebText, ratio) =>
 
 module.exports = (req, res) => {
 	const url = req.body.url;
-
+	const language = req.body.language;
+	db.addNewUrl(url);
 	request(url, (err, nores, body) => {
-		const extractedWebText = extractor(body, 'en');
+		const extractedWebText = extractor(body, language);
 		const articleText = extractedWebText.text;
+		console.log(articleText.length);
+		if (articleText.length > 5000) {
+			res.statusCode = 302;
+			res.setHeader('Content-Type', 'application/json');
+			res.end(JSON.stringify({ error: 'Text too long' }));
+			return;
+		}
 		const WPM = 200;
 		const articleWordLength = articleText.split(' ').length;
 		let ratio = (WPM * 5) / articleWordLength;
 		if (ratio < 0.2) ratio = 0.2;
-		getSummary(articleText, ratio).then((data) => {
+		if (ratio > 1) ratio = 0.6;
+		console.log(ratio);
+		MockSummary(articleText, ratio).then((data) => {
 			res.statusCode = 200;
 			res.setHeader('Content-Type', 'application/json');
 			res.end(JSON.stringify({ ...data, ...extractedWebText }));

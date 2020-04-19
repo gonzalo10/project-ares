@@ -103,6 +103,28 @@ const ReadingTime = styled.span`
 	}
 `;
 
+const Button = styled.button`
+	white-space: nowrap;
+	display: inline-block;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 14px;
+	box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+	background: #fff;
+	border-radius: 4px;
+	font-size: 15px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.025em;
+	color: ${(props) => props.theme.yellow};
+	background-color: ${(props) => props.theme.backgroundDarker};
+	text-decoration: none;
+	border: 1px solid ${(props) => props.theme.backgroundDarker};
+	transition: all 0.15s ease;
+	cursor: pointer;
+	outline: none;
+`;
+
 const getAverageReadingTime = (words) => {
 	const WPM = 200;
 	const averageReadingTime = words.length / WPM;
@@ -117,8 +139,10 @@ const Home = () => {
 	const [articleMeta, setArticleMeta] = useState(null);
 	const [articleReadingTime, setArticleReadingTime] = useState(null);
 	const [summaryReadingTime, setSummaryReadingTime] = useState(null);
+	const [summaryError, setSummaryError] = useState(null);
+	const [articleLanguage, setLanguage] = useState('en');
 
-	const handleSearchUrl = useCallback(async (e) => {
+	const handleSearchUrl = async (e) => {
 		const urlValue = urlInputRef.current.value;
 		setLoading(true);
 		const response = await fetch('/api/extract', {
@@ -127,29 +151,46 @@ const Home = () => {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				url: urlValue
+				url: urlValue,
+				language: articleLanguage
 			})
 		});
-		const { summary, ...rest } = await response.json();
+		const { summary, error, ...rest } = await response.json();
+		if (error) {
+			console.log(error);
+			setSummaryError(error);
+			return;
+		}
 		const articleWords = rest.text.split(' ');
 		const summaryWords = summary.split(' ');
 		setArticleReadingTime(getAverageReadingTime(articleWords));
 		setSummaryReadingTime(getAverageReadingTime(summaryWords));
 		setSummary(summary.split('.'));
 		setArticleMeta(rest);
-	}, []);
+	};
 
 	const handleKeyDown = useCallback(
 		(e) => {
 			const { keyCode } = e;
 			if (keyCode === 13) {
 				handleSearchUrl();
+				setSummary(null);
 			}
 		},
 		[handleSearchUrl]
 	);
 
 	const handleTimeClick = useCallback((e) => {}, []);
+	const handleSearchClick = useCallback((e) => {
+		setSummary(null);
+		setArticleMeta(null);
+		setArticleReadingTime(null);
+		setSummaryReadingTime(null);
+		setSummary(null);
+		setArticleMeta(null);
+		setSummaryError(null);
+		setLoading(null);
+	}, []);
 
 	return (
 		<HomeWrapper>
@@ -160,11 +201,15 @@ const Home = () => {
 					</Title>
 				)}
 				<SearchPositiones>
-					<Search ref={urlInputRef} onKeyDown={handleKeyDown} />
+					{summary ? (
+						<Button onClick={handleSearchClick}>New Search</Button>
+					) : (
+						<Search ref={urlInputRef} onKeyDown={handleKeyDown} />
+					)}
 				</SearchPositiones>
 			</SearchWrapper>
 			<ResultsWrapper>
-				{isLoading && !summary && (
+				{isLoading && !summary && !summaryError && (
 					<LoadingWrapper>
 						<GridLoader color={'yellow'} />
 						<LoadingLabel>
@@ -172,6 +217,7 @@ const Home = () => {
 						</LoadingLabel>
 					</LoadingWrapper>
 				)}
+				{summaryError && <div>{summaryError}</div>}
 				{summary && (
 					<Card>
 						<CardContent>

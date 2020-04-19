@@ -52,7 +52,7 @@ const SearchWrapper = styled.div`
 
 const Search = React.forwardRef((props, ref) => {
 	return (
-		<SearchWrapper onKeyDown={props.onKeyDown}>
+		<SearchWrapper onKeyDown={props.onKeyDown} onClick={props.onClick}>
 			<InputWrapper>
 				<Logo width='30px' src={SearchIcon} />
 				<Input ref={ref} onChange={(e) => {}} placeholder='Url to summirze' />
