@@ -1,6 +1,60 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
+
 import SearchIcon from '../assets/search.svg';
+
+const SearchWrapper = styled.div`
+	height: ${(props) =>
+		props.isLoading ? (props.hasSummary ? '0px' : '20%') : '100%'};
+	transition: height 1s ease-in-out, background-color 0.2s linear;
+	justify-content: center;
+	display: flex;
+	align-items: center;
+	background: ${(props) => props.theme.backgroundLight};
+	position: relative;
+	border-bottom: 1px solid ${(props) => props.theme.greyLight};
+`;
+
+const SearchPositiones = styled.div`
+	position: absolute;
+	bottom: 0;
+	transform: translate(0px, 50%);
+`;
+const PrefixTitle = styled.span`
+	color: ${(props) => props.theme.yellow};
+`;
+
+const Title = styled.span`
+	color: ${(props) => props.theme.text};
+	border-bottom: 1px solid ${(props) => props.theme.yellow};
+	text-transform: uppercase;
+	font-weight: 600;
+	letter-spacing: 4px;
+	font-size: 1.7rem;
+	user-select: none;
+`;
+
+const Button = styled.button`
+	white-space: nowrap;
+	display: inline-block;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 14px;
+	box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+	background: #fff;
+	border-radius: 4px;
+	font-size: 15px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.025em;
+	color: ${(props) => props.theme.yellow};
+	background-color: ${(props) => props.theme.backgroundDarker};
+	text-decoration: none;
+	border: 1px solid ${(props) => props.theme.backgroundDarker};
+	transition: all 0.15s ease;
+	cursor: pointer;
+	outline: none;
+`;
 
 const Logo = styled.img`
 	width: 20px;
@@ -34,14 +88,14 @@ const Input = styled.input`
 	height: 34px;
 	font-size: 16px;
 	margin-left: 20px;
-	margin-top: 5px;
+	margin-top: 3px;
 	color: ${(props) => props.theme.text};
 	transition: background-color 0.2s linear;
 	::placeholder {
 		color: ${(props) => props.theme.text}fa;
 	}
 `;
-const SearchWrapper = styled.div`
+const Search = styled.div`
 	display: flex;
 	justify-content: center;
 	position: relative;
@@ -53,15 +107,34 @@ const SearchWrapper = styled.div`
 	margin: auto;
 `;
 
-const Search = React.forwardRef((props, ref) => {
-	return (
-		<SearchWrapper onKeyDown={props.onKeyDown} onClick={props.onClick}>
-			<InputWrapper>
-				<Logo width='30px' src={SearchIcon} />
-				<Input ref={ref} onChange={(e) => {}} placeholder='Url to summirze' />
-			</InputWrapper>
-		</SearchWrapper>
-	);
-});
+const SearchComponent = forwardRef(
+	({ isLoading, summary, handleSearchClick, handleKeyDown }, ref) => {
+		return (
+			<SearchWrapper isLoading={isLoading} hasSummary={summary}>
+				{!summary && (
+					<Title>
+						Summary <PrefixTitle>Magic</PrefixTitle>
+					</Title>
+				)}
+				<SearchPositiones>
+					{summary ? (
+						<Button onClick={handleSearchClick}>New Search</Button>
+					) : (
+						<Search onKeyDown={handleKeyDown} onClick={handleSearchClick}>
+							<InputWrapper>
+								<Logo width='30px' src={SearchIcon} />
+								<Input
+									ref={ref}
+									onChange={(e) => {}}
+									placeholder='Url to summirze'
+								/>
+							</InputWrapper>
+						</Search>
+					)}
+				</SearchPositiones>
+			</SearchWrapper>
+		);
+	}
+);
 
-export default Search;
+export default SearchComponent;

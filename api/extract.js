@@ -41,7 +41,7 @@ const getSummary = (extractedWebText, ratio) =>
 module.exports = (req, res) => {
 	const url = req.body.url;
 	const language = req.body.language;
-	// db.addNewUrl(url);
+	db.addNewUrl(url);
 	request(url, (err, nores, body) => {
 		const extractedWebText = extractor(body, language);
 		const articleText = extractedWebText.text;

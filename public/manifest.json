@@ -3,9 +3,19 @@
 	"name": "Ares Summarizer",
 	"icons": [
 		{
-			"src": "sword.svg",
-			"sizes": "64x64 32x32 24x24 16x16",
-			"type": "image/svg"
+			"src": "sword16.png",
+			"type": "image/svg",
+			"sizes": "16x16"
+		},
+		{
+			"src": "sword64.png",
+			"type": "image/svg",
+			"sizes": "64x64"
+		},
+		{
+			"src": "sword32.png",
+			"type": "image/svg",
+			"sizes": "32x32"
 		},
 		{
 			"src": "sword192.png",
