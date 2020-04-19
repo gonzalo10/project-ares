@@ -45,7 +45,10 @@ const SearchWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	position: relative;
-	width: 40vw;
+	@media only screen and (max-width: 600px) {
+		width: 90vw;
+	}
+	width: 50vw;
 	max-width: 482px;
 	margin: auto;
 `;

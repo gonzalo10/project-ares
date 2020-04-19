@@ -24,6 +24,9 @@ const SearchWrapper = styled.div`
 const ResultsWrapper = styled.div`
 	height: 100%;
 	padding: 30px;
+	@media only screen and (max-width: 600px) {
+		padding: 5px;
+	}
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -58,7 +61,7 @@ const Title = styled.span`
 `;
 
 const CardContent = styled.div`
-	padding: 15px 30px 15px;
+	padding: 15px 5px 15px 30px;
 	max-width: 700px;
 	color: ${(props) => props.theme.text};
 	background-color: ${(props) => props.theme.backgroundDarker};
@@ -77,11 +80,15 @@ const CardBody = styled.div`
 	display: flex;
 	flex-direction: column;
 	overflow: scroll;
+	@media only screen and (max-width: 600px) {
+		max-height: 70vh;
+	}
 	max-height: 60vh;
 	padding-top: 15px;
 `;
 const SummarizedText = styled.p`
 	line-height: 1.8em;
+	padding: 0px 25px 0px 0px;
 	margin: 0;
 	margin-bottom: 12px;
 	text-align: justify;
