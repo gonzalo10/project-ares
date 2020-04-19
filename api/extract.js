@@ -46,7 +46,7 @@ module.exports = (req, res) => {
 		const extractedWebText = extractor(body, language);
 		const articleText = extractedWebText.text;
 		console.log(articleText.length);
-		if (articleText.length > 5000) {
+		if (articleText.length > 10000) {
 			res.statusCode = 302;
 			res.setHeader('Content-Type', 'application/json');
 			res.end(JSON.stringify({ error: 'Text too long' }));
