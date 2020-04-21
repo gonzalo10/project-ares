@@ -106,15 +106,18 @@ const SubNavbar = () => {
 	);
 };
 
-const HistoryPopover = ({ articles }) => {
-	console.log(articles);
+const HistoryPopover = ({ articles, setSelectedArticle }) => {
 	return (
 		<PopoverWrapper>
 			<HistoryList>
 				{articles &&
 					articles.map((article) => {
 						return (
-							<HistoryItem key={article.id}>
+							<HistoryItem
+								key={article.id}
+								onClick={() => {
+									setSelectedArticle(article);
+								}}>
 								<WebIcon src={'https://lifemathmoney.com/favicon.ico'} />
 								<div>{article.title}</div>
 							</HistoryItem>
@@ -125,7 +128,7 @@ const HistoryPopover = ({ articles }) => {
 	);
 };
 
-const Header = () => {
+const Header = ({ setSelectedArticle }) => {
 	const [articles, setArticles] = useState(null);
 	const [isHistoryVisible, setHistoryVisible] = useState(false);
 
@@ -135,22 +138,24 @@ const Header = () => {
 			setArticles(response);
 		}
 		fetchData();
-		document.addEventListener('mousedown', () => setHistoryVisible(false));
-		return document.removeEventListener('mousedown', null);
 	}, [setArticles, setHistoryVisible]);
 
-	const handleMouseEnter = useCallback(() => {
-		setHistoryVisible(true);
-	}, [setHistoryVisible]);
+	const handleClick = useCallback(() => {
+		setHistoryVisible(!isHistoryVisible);
+	}, [isHistoryVisible]);
 
-	console.log(articles);
 	return (
 		<Nav>
 			<MainNavbar />
 			<SubNavbar />
-			<History onMouseEnter={handleMouseEnter}>
+			<History onClick={handleClick}>
 				History
-				{isHistoryVisible && <HistoryPopover articles={articles} />}
+				{isHistoryVisible && (
+					<HistoryPopover
+						articles={articles}
+						setSelectedArticle={setSelectedArticle}
+					/>
+				)}
 			</History>
 			<Toggle />
 		</Nav>

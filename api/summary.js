@@ -6,7 +6,6 @@ module.exports = (req, res) => {
 	};
 	var textRank = new tr.TextRank(textToSummary, settings);
 	res.statusCode = 200;
-	console.log(textRank.summarizedArticle);
 	res.setHeader('Content-Type', 'application/json');
 	res.end(JSON.stringify(textRank));
 };

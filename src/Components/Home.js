@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Results from './Results';
 import Search from './Search';
 import IndexedDB from '../helpers/IndexedDB';
+import API from '../helpers/apiCall';
 
 const HomeWrapper = styled.div`
 	height: calc(100% - 65px);
@@ -19,47 +20,34 @@ const getAverageReadingTime = (words) => {
 	return `${minutes} min`;
 };
 
-const Home = () => {
+const Home = ({ selectedArticle }) => {
 	const urlInputRef = useRef(null);
-	const [summary, setSummary] = useState(null);
 	const [isLoading, setLoading] = useState(false);
-	const [articleMeta, setArticleMeta] = useState(null);
-	const [articleReadingTime, setArticleReadingTime] = useState(null);
-	const [summaryReadingTime, setSummaryReadingTime] = useState(null);
+	const [article, setArticle] = useState({});
 	const [summaryError, setSummaryError] = useState(null);
-	const [articleLanguage, setLanguage] = useState('en');
+
+	useEffect(() => {
+		if (!selectedArticle) return;
+		setArticle({ ...selectedArticle });
+	}, [selectedArticle]);
 
 	const handleSearchUrl = async (e) => {
 		const urlValue = urlInputRef.current.value;
 		setLoading(true);
-		const response = await fetch('/api/extract', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				url: urlValue,
-				language: articleLanguage
-			})
-		});
-		const { summary, error, ...rest } = await response.json();
-		console.log({ summary, error, ...rest });
-
+		const response = await API(urlValue);
+		const { summary, error, text, title, image, ...rest } = response;
+		setLoading(false);
 		if (error) return setSummaryError(error);
 
 		IndexedDB.saveArticle({
-			summary,
-			text: rest.text,
-			title: rest.title,
-			image: rest.image,
+			summary: summary.split('.'),
+			text,
+			title,
+			image,
 			url: urlValue
 		});
-		const articleWords = rest.text.split(' ');
-		const summaryWords = summary.split(' ');
-		setArticleReadingTime(getAverageReadingTime(articleWords));
-		setSummaryReadingTime(getAverageReadingTime(summaryWords));
-		setSummary(summary.split('.'));
-		setArticleMeta(rest);
+
+		setArticle({ summary: summary.split('.'), text, title });
 	};
 
 	const handleKeyDown = useCallback(
@@ -67,20 +55,13 @@ const Home = () => {
 			const { keyCode } = e;
 			if (keyCode === 13) {
 				handleSearchUrl();
-				setSummary(null);
 			}
 		},
 		[handleSearchUrl]
 	);
 
-	const handleTimeClick = useCallback((e) => {}, []);
 	const handleSearchClick = useCallback((e) => {
-		setSummary(null);
-		setArticleMeta(null);
-		setArticleReadingTime(null);
-		setSummaryReadingTime(null);
-		setSummary(null);
-		setArticleMeta(null);
+		setArticle({});
 		setSummaryError(null);
 		setLoading(null);
 	}, []);
@@ -90,17 +71,14 @@ const Home = () => {
 			<Search
 				ref={urlInputRef}
 				isLoading={isLoading}
-				summary={summary}
+				summary={article.summary}
 				handleSearchClick={handleSearchClick}
 				handleKeyDown={handleKeyDown}
 			/>
 			<Results
 				isLoading={isLoading}
-				summary={summary}
+				article={article}
 				summaryError={summaryError}
-				articleMeta={articleMeta}
-				handleTimeClick={handleTimeClick}
-				summaryReadingTime={summaryReadingTime}
 			/>
 		</HomeWrapper>
 	);

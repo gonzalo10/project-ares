@@ -8,7 +8,6 @@ const q = faunadb.query;
 const getAllArticles = client
 	.query(q.Paginate(q.Match(q.Ref('indexes/all_articles'))))
 	.then((response) => {
-		console.log('response data', response.data);
 		const notesRefs = response.data;
 
 		const getAllProductDataQuery = notesRefs.map((ref) => {

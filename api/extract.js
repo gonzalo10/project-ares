@@ -3,7 +3,7 @@ import request from 'request';
 import axios from 'axios';
 import db from './db';
 
-const mockLamda = (t) =>
+const mockLamda = () =>
 	Promise.resolve({
 		summary: `No matter what you want to do, if you want to stay consistent at it, you have to truly desire the outcomes your actions will bring.
 			Inconsistency is simply a manifestation of a lack of real desire.
@@ -23,7 +23,7 @@ const mockLamda = (t) =>
 			If you lack intense desire, you will always be inconsistent.`
 	});
 const MockSummary = () => {
-	return mockLamda(2000);
+	return mockLamda();
 };
 const getSummary = (extractedWebText, ratio) =>
 	axios
@@ -41,7 +41,7 @@ const getSummary = (extractedWebText, ratio) =>
 module.exports = (req, res) => {
 	const url = req.body.url;
 	const language = req.body.language;
-	db.addNewUrl(url);
+	// db.addNewUrl(url);
 	request(url, (err, nores, body) => {
 		const extractedWebText = extractor(body, language);
 		const articleText = extractedWebText.text;
@@ -56,10 +56,12 @@ module.exports = (req, res) => {
 		let ratio = (WPM * 5) / articleWordLength;
 		if (ratio < 0.2) ratio = 0.2;
 		if (ratio > 1) ratio = 0.6;
-		getSummary(articleText, ratio).then((data) => {
-			res.statusCode = 200;
-			res.setHeader('Content-Type', 'application/json');
-			res.end(JSON.stringify({ ...data, ...extractedWebText }));
+		MockSummary(articleText, ratio).then((data) => {
+			setTimeout(() => {
+				res.statusCode = 200;
+				res.setHeader('Content-Type', 'application/json');
+				res.end(JSON.stringify({ ...data, ...extractedWebText }));
+			}, 1000);
 		});
 	});
 };

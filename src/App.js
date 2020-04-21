@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from './Components/Header';
 import Body from './Components/Home';
 import { useTheme } from './ThemeManager';
@@ -29,11 +29,12 @@ const themes = {
 };
 
 function App() {
+	const [selectedArticle, setSelectedArticle] = useState(null);
 	const theme = useTheme();
 	return (
 		<ThemeProvider theme={themes[theme.mode] || themes.light}>
-			<Header />
-			<Body />
+			<Header setSelectedArticle={setSelectedArticle} />
+			<Body selectedArticle={selectedArticle} />
 		</ThemeProvider>
 	);
 }

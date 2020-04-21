@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import SearchIcon from '../assets/search.svg';
 
 const SearchWrapper = styled.div`
-	height: ${(props) =>
-		props.isLoading ? (props.hasSummary ? '0px' : '20%') : '100%'};
+	height: ${(props) => (props.hasSummary || props.isLoading ? '0px' : '100%')};
 	transition: height 1s ease-in-out, background-color 0.2s linear;
 	justify-content: center;
 	display: flex;
@@ -108,19 +107,20 @@ const Search = styled.div`
 `;
 
 const SearchComponent = forwardRef(
-	({ isLoading, summary, handleSearchClick, handleKeyDown }, ref) => {
+	({ summary, isLoading, handleSearchClick, handleKeyDown }, ref) => {
+		console.log(!!summary);
 		return (
-			<SearchWrapper isLoading={isLoading} hasSummary={summary}>
-				{!summary && (
+			<SearchWrapper hasSummary={summary} isLoading={isLoading}>
+				{!summary && !isLoading && (
 					<Title>
 						Summary <PrefixTitle>Magic</PrefixTitle>
 					</Title>
 				)}
 				<SearchPositiones>
-					{summary ? (
+					{summary || isLoading ? (
 						<Button onClick={handleSearchClick}>New Search</Button>
 					) : (
-						<Search onKeyDown={handleKeyDown} onClick={handleSearchClick}>
+						<Search onKeyDown={handleKeyDown}>
 							<InputWrapper>
 								<Logo width='30px' src={SearchIcon} />
 								<Input
