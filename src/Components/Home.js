@@ -5,6 +5,7 @@ import Results from './Results';
 import Search from './Search';
 import IndexedDB from '../helpers/IndexedDB';
 import API from '../helpers/apiCall';
+import axios from 'axios';
 
 const HomeWrapper = styled.div`
 	height: calc(100% - 65px);
@@ -20,16 +21,10 @@ const getAverageReadingTime = (words) => {
 	return `${minutes} min`;
 };
 
-const Home = ({ selectedArticle }) => {
+const Home = ({ article, setArticle }) => {
 	const urlInputRef = useRef(null);
 	const [isLoading, setLoading] = useState(false);
-	const [article, setArticle] = useState({});
 	const [summaryError, setSummaryError] = useState(null);
-
-	useEffect(() => {
-		if (!selectedArticle) return;
-		setArticle({ ...selectedArticle });
-	}, [selectedArticle]);
 
 	const handleSearchUrl = async (e) => {
 		const urlValue = urlInputRef.current.value;
@@ -64,6 +59,14 @@ const Home = ({ selectedArticle }) => {
 		setArticle({});
 		setSummaryError(null);
 		setLoading(null);
+	}, []);
+
+	useEffect(() => {
+		const urlValue =
+			'https://techcrunch.com/2020/04/21/8-top-fintech-vcs-discuss-covid-19-trends-signals-and-opportunities/';
+		axios.get(urlValue).then((res) => {
+			console.log(res);
+		});
 	}, []);
 
 	return (

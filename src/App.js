@@ -9,12 +9,13 @@ const themes = {
 		primary: 'green',
 		yellow: '#f0c419',
 		yellowLight: '#f0c41938',
-		greyLight: '#eaeaea',
 		background: '#fafafa',
 		backgroundLight: 'white',
 		backgroundDarker: 'white',
 		text: 'black',
-		darkText: '#a5a4a4'
+		darkText: '#a5a4a4',
+		grey1: '#e8e8e8',
+		greyLight: '#eaeaea'
 	},
 	dark: {
 		yellow: '#f0c419',
@@ -24,19 +25,20 @@ const themes = {
 		backgroundLight: '#363340',
 		backgroundDarker: '#161625',
 		text: 'white',
-		darkText: '#a5a4a4'
+		darkText: '#a5a4a4',
+		grey1: '#26242E'
 	}
 };
 
-function App() {
-	const [selectedArticle, setSelectedArticle] = useState(null);
+const App = () => {
+	const [article, setArticle] = useState({});
 	const theme = useTheme();
 	return (
 		<ThemeProvider theme={themes[theme.mode] || themes.light}>
-			<Header setSelectedArticle={setSelectedArticle} />
-			<Body selectedArticle={selectedArticle} />
+			<Header setSelectedArticle={setArticle} />
+			<Body article={article} setArticle={setArticle} />
 		</ThemeProvider>
 	);
-}
+};
 
 export default App;

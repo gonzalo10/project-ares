@@ -29,7 +29,13 @@ const LoadingLabel = styled.span`
 
 const CardContent = styled.div`
 	padding: 15px 5px 15px 5px;
-	max-width: 700px;
+	max-height: 80vh;
+	@media only screen and (max-width: 600px) {
+		max-width: 93vh;
+	}
+	max-width: 80vw;
+	display: flex;
+	flex-direction: column;
 	color: ${(props) => props.theme.text};
 	background-color: ${(props) => props.theme.backgroundDarker};
 	transition: background-color 0.2s linear;
@@ -54,7 +60,7 @@ const CardBody = styled.div`
 	@media only screen and (max-height: 600px) {
 		max-height: 60vh;
 	}
-	max-height: 60vh;
+	height: 100%;
 	padding-top: 15px;
 `;
 
@@ -104,41 +110,57 @@ const PrefixTitle = styled.span`
 
 const Button = styled.img`
 	width: 8px;
-	margin-top: -18px;
-	z-index: 2;
 	cursor: pointer;
 	position: relative;
+	filter: contrast(0);
 	${({ isVisible }) => isVisible && 'transform: rotate(180deg);'}
 `;
 
-const ExtraInfoText = ({ p }) => {
+const ExtraInfoWrapper = styled.div`
+	margin-top: -18px;
+	z-index: 2;
+`;
+
+const ExtraInfoText = styled(Text)`
+	background-color: ${(props) => props.theme.grey1};
+	${(props) => !props.isVisible && 'display: none'};
+`;
+
+const ExtraInfo = ({ p }) => {
 	const [isVisible, setVisible] = useState(false);
 	return (
-		<>
+		<ExtraInfoWrapper>
 			<Button
 				onClick={() => setVisible(!isVisible)}
 				src={arrowSvg}
 				isVisible={isVisible}
 			/>
-			{isVisible && <Text>{p}.</Text>}
-		</>
+			<ExtraInfoText isVisible={isVisible}>{p}.</ExtraInfoText>
+		</ExtraInfoWrapper>
 	);
 };
 
 const joinArticleTextLines = (article) => {
 	const newStructure = [];
 	const textArray = article.text.split('.');
+	const filteredSentences = textArray.filter((sentence) => {
+		console.log(sentence.trim().length);
+		return sentence.trim().length > 1;
+		return sentence !== '';
+	});
+	console.log({ filteredSentences });
+	console.log({ text: article.text.split('\n\n') });
 	const newArray = article.summary.map((p) => p.trim());
-	for (let i = 0; i < textArray.length; i++) {
-		if (newArray.includes(textArray[i].trim()))
-			newStructure.push({ text: textArray[i], isSummary: true });
-		else newStructure.push({ text: textArray[i], isSummary: false });
+	for (let i = 0; i < filteredSentences.length; i++) {
+		if (newArray.includes(filteredSentences[i].trim()))
+			newStructure.push({ text: filteredSentences[i], isSummary: true });
+		else newStructure.push({ text: filteredSentences[i], isSummary: false });
 	}
 	let itemsToDelete = [];
 	for (let i = 0; i < newStructure.length; i++) {
 		let prevI = i;
-		while (!newStructure[i].isSummary && !newStructure[i + 1].isSummary) {
-			newStructure[prevI].text += `.\n\n ${newStructure[i + 1].text}`;
+		while (!newStructure[i].isSummary && !newStructure[i + 1]?.isSummary) {
+			newStructure[prevI].text += `.\n\n ${newStructure[i + 1]?.text}`;
 			itemsToDelete.push(i + 1);
 			i++;
 		}
@@ -154,7 +176,7 @@ const ArticleText = ({ article }) => {
 	const newStructure = joinArticleTextLines(article);
 	return newStructure.map(({ text, isSummary }, index) => {
 		if (isSummary) return <Text key={index}>{text}.</Text>;
-		return <ExtraInfoText key={index} p={text} />;
+		return <ExtraInfo key={index} p={text} />;
 	});
 };
 

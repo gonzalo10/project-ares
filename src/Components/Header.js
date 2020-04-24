@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import LogoBase from '../assets/sword.svg';
 import styled from 'styled-components';
-import Toggle from './Toggle';
+import DarkModeToggle from './Toggle';
 import IndexedDB from '../helpers/IndexedDB';
 
 const Logo = styled.img`
@@ -43,18 +43,51 @@ const Title = styled.span`
 	transition: color 0.2s ease;
 	cursor: pointer;
 	font-weight: 400;
+	color: ${(props) => props.theme.text};
+	font-size: 18px;
+	&:hover {
+		border-bottom: 1px solid white;
+		padding-bottom: 5px;
+	}
+`;
+
+const Text = styled.span`
+	color: ${(props) => props.theme.text};
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+`;
+
+const HistoryOption = styled.div`
+	position: relative;
+	cursor: pointer;
 `;
 
 const PopoverWrapper = styled.div`
 	position: absolute;
 	right: 0;
 	top: 40px;
-	border: 1px solid;
 	z-index: 1;
 	width: 250px;
-	transform: translate(50%, 0px);
+	transform: translate(40%, 0px);
 	border-radius: 15px;
 	background: ${(props) => props.theme.backgroundDarker};
+	box-shadow: 0 50px 100px -20px rgba(50, 50, 93, 0.25),
+		0 30px 60px -30px rgba(0, 0, 0, 0.3),
+		0 -18px 60px -10px rgba(0, 0, 0, 0.025);
+	::before {
+		position: absolute;
+		z-index: -1;
+		content: '';
+		right: calc(50% - 10px);
+		top: -10px;
+		border-style: solid;
+		border-width: 0 10px 10px 10px;
+		border-color: transparent transparent
+			${(props) => props.theme.backgroundDarker} transparent;
+		transition-duration: 0.3s;
+		transition-property: transform;
+	}
 `;
 const WebIcon = styled.img`
 	width: 15px;
@@ -64,8 +97,13 @@ const HistoryList = styled.ul`
 	list-style-type: none;
 	padding: 0;
 `;
-const History = styled.div`
-	position: relative;
+const Navbar = styled.div`
+	width: 100%;
+	height: 100%;
+	align-items: center;
+	display: flex;
+	justify-content: flex-end;
+	padding: 0px 10%;
 `;
 const HistoryItem = styled.div`
 	display: flex;
@@ -79,11 +117,7 @@ const HistoryItem = styled.div`
 	}
 `;
 
-const routes = {
-	overview: 'Summary'
-};
-
-const MainNavbar = () => {
+const NavbarLogo = () => {
 	return (
 		<NavbarWrapper>
 			<Logo width='30px' src={LogoBase} />
@@ -91,22 +125,8 @@ const MainNavbar = () => {
 	);
 };
 
-const SubNavbar = () => {
-	return (
-		<NavbarWrapper>
-			{Object.keys(routes).map((route) => {
-				const isActive = false;
-				return (
-					<NavItem isActive={isActive} key={route}>
-						<Title isActive={isActive}>{routes[route]}</Title>
-					</NavItem>
-				);
-			})}
-		</NavbarWrapper>
-	);
-};
-
-const HistoryPopover = ({ articles, setSelectedArticle }) => {
+const HistoryPopover = ({ articles, setSelectedArticle, isVisible }) => {
+	if (!isVisible) return null;
 	return (
 		<PopoverWrapper>
 			<HistoryList>
@@ -119,7 +139,7 @@ const HistoryPopover = ({ articles, setSelectedArticle }) => {
 									setSelectedArticle(article);
 								}}>
 								<WebIcon src={'https://lifemathmoney.com/favicon.ico'} />
-								<div>{article.title}</div>
+								<Text>{article.title}</Text>
 							</HistoryItem>
 						);
 					})}
@@ -144,20 +164,28 @@ const Header = ({ setSelectedArticle }) => {
 		setHistoryVisible(!isHistoryVisible);
 	}, [isHistoryVisible]);
 
+	const handleSelected = useCallback(
+		(e) => {
+			setSelectedArticle(e);
+			setHistoryVisible(false);
+		},
+		[setHistoryVisible, setSelectedArticle]
+	);
+
 	return (
 		<Nav>
-			<MainNavbar />
-			<SubNavbar />
-			<History onClick={handleClick}>
-				History
-				{isHistoryVisible && (
+			<NavbarLogo />
+			<Navbar>
+				<HistoryOption>
+					<Title onClick={handleClick}>History</Title>
 					<HistoryPopover
 						articles={articles}
-						setSelectedArticle={setSelectedArticle}
+						setSelectedArticle={handleSelected}
+						isVisible={isHistoryVisible}
 					/>
-				)}
-			</History>
-			<Toggle />
+				</HistoryOption>
+			</Navbar>
+			<DarkModeToggle />
 		</Nav>
 	);
 };
