@@ -34,39 +34,30 @@ module.exports = (req, res) => {
 	const url = req.body.url;
 	const language = req.body.language;
 	// db.addNewUrl(url);
-	// axios
-	// 	.post('http://localhost:3001', {
-	// 		url: url
-	// 	})
-	// 	.then((result) => {
-	// 		console.log(result.data[0]);
-	// 		res.statusCode = 200;
-	// 		res.setHeader('Content-Type', 'application/json');
-	// 		res.end(JSON.stringify({ ...result.data[0] }));
-	// 		return res.data;
-	// 	});
-
-	request(url, (err, nores, body) => {
-		const extractedWebText = extractor(body, language);
-		console.log(extractedWebText);
-		const articleText = extractedWebText.text;
-		if (articleText.length > 100000) {
-			res.statusCode = 302;
-			res.setHeader('Content-Type', 'application/json');
-			res.end(JSON.stringify({ error: 'Text too long' }));
-			return;
-		}
-		const WPM = 200;
-		const articleWordLength = articleText.split(' ').length;
-		let ratio = (WPM * 5) / articleWordLength;
-		if (ratio < 0.2) ratio = 0.2;
-		if (ratio > 1) ratio = 0.6;
-		MockSummary(articleText, ratio).then((data) => {
-			// setTimeout(() => {
-			res.statusCode = 200;
-			res.setHeader('Content-Type', 'application/json');
-			res.end(JSON.stringify({ ...data, ...extractedWebText }));
-			// }, 1000);
+	axios
+		.post('https://extractarticle.now.sh', {
+			url: url
+		})
+		.then((result) => {
+			const article = result.data[0];
+			const articleText = article.text;
+			if (articleText.length > 100000) {
+				res.statusCode = 302;
+				res.setHeader('Content-Type', 'application/json');
+				res.end(JSON.stringify({ error: 'Text too long' }));
+				return;
+			}
+			const WPM = 200;
+			const articleWordLength = articleText.split(' ').length;
+			let ratio = (WPM * 5) / articleWordLength;
+			if (ratio < 0.2) ratio = 0.2;
+			if (ratio > 1) ratio = 0.6;
+			getSummary(articleText, ratio).then((summary) => {
+				// setTimeout(() => {
+				res.statusCode = 200;
+				res.setHeader('Content-Type', 'application/json');
+				res.end(JSON.stringify({ ...summary, ...article }));
+				// }, 1000);
+			});
 		});
-	});
 };

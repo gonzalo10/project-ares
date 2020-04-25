@@ -108,7 +108,6 @@ const Search = styled.div`
 
 const SearchComponent = forwardRef(
 	({ summary, isLoading, handleSearchClick, handleKeyDown }, ref) => {
-		console.log(!!summary);
 		return (
 			<SearchWrapper hasSummary={summary} isLoading={isLoading}>
 				{!summary && !isLoading && (

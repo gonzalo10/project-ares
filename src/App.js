@@ -12,7 +12,7 @@ const themes = {
 		background: '#fafafa',
 		backgroundLight: 'white',
 		backgroundDarker: 'white',
-		text: 'black',
+		text: '#222642',
 		darkText: '#a5a4a4',
 		grey1: '#e8e8e8',
 		greyLight: '#eaeaea'
@@ -32,11 +32,20 @@ const themes = {
 
 const App = () => {
 	const [article, setArticle] = useState({});
+	const [updateDB, setDBUpdated] = useState(false);
 	const theme = useTheme();
 	return (
 		<ThemeProvider theme={themes[theme.mode] || themes.light}>
-			<Header setSelectedArticle={setArticle} />
-			<Body article={article} setArticle={setArticle} />
+			<Header
+				setSelectedArticle={setArticle}
+				updateDB={updateDB}
+				setDBUpdated={setDBUpdated}
+			/>
+			<Body
+				article={article}
+				setArticle={setArticle}
+				setDBUpdated={setDBUpdated}
+			/>
 		</ThemeProvider>
 	);
 };

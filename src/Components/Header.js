@@ -13,7 +13,7 @@ const Nav = styled.div`
 	flex-direction: row;
 	align-items: center;
 	margin: auto;
-	padding: 0 20px;
+	padding: 0 20px 0px 0px;
 	user-select: none;
 	position: relative;
 	height: 64px;
@@ -26,17 +26,10 @@ const NavbarWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 10px 20px;
+	padding: 0px 10px;
 	height: 100%;
 `;
 
-const NavItem = styled.div`
-	height: 100%;
-	align-items: center;
-	display: flex;
-	margin: 0px 15px;
-	transition: border 0.2s ease;
-`;
 const Title = styled.span`
 	text-decoration: none;
 	font-size: 15px;
@@ -58,7 +51,8 @@ const Text = styled.span`
 	text-overflow: ellipsis;
 `;
 
-const HistoryOption = styled.div`
+const NavbarItem = styled.div`
+	padding: 0px 20px;
 	position: relative;
 	cursor: pointer;
 `;
@@ -68,13 +62,13 @@ const PopoverWrapper = styled.div`
 	right: 0;
 	top: 40px;
 	z-index: 1;
+	min-height: 50px;
 	width: 250px;
-	transform: translate(40%, 0px);
+	transform: translate(31%, 0px);
 	border-radius: 15px;
 	background: ${(props) => props.theme.backgroundDarker};
-	box-shadow: 0 50px 100px -20px rgba(50, 50, 93, 0.25),
-		0 30px 60px -30px rgba(0, 0, 0, 0.3),
-		0 -18px 60px -10px rgba(0, 0, 0, 0.025);
+	box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+		0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
 	::before {
 		position: absolute;
 		z-index: -1;
@@ -90,8 +84,8 @@ const PopoverWrapper = styled.div`
 	}
 `;
 const WebIcon = styled.img`
-	width: 15px;
-	padding-right: 15px;
+	height: 100%;
+	margin: auto;
 `;
 const HistoryList = styled.ul`
 	list-style-type: none;
@@ -103,19 +97,21 @@ const Navbar = styled.div`
 	align-items: center;
 	display: flex;
 	justify-content: flex-end;
-	padding: 0px 10%;
 `;
 const HistoryItem = styled.div`
-	display: flex;
+	display: grid;
+	grid-template-columns: 1fr 4fr;
 	justify-content: center;
 	align-items: center;
 	font-size: 14px;
-	padding: 10px 10px;
+	padding: 8px 20px;
 	cursor: pointer;
 	&:hover {
 		background: ${(props) => props.theme.background};
 	}
 `;
+
+const SettingsContent = styled.div``;
 
 const NavbarLogo = () => {
 	return (
@@ -132,14 +128,15 @@ const HistoryPopover = ({ articles, setSelectedArticle, isVisible }) => {
 			<HistoryList>
 				{articles &&
 					articles.map((article) => {
+						const { id, favicon, title } = article;
 						return (
 							<HistoryItem
-								key={article.id}
+								key={id}
 								onClick={() => {
 									setSelectedArticle(article);
 								}}>
-								<WebIcon src={'https://lifemathmoney.com/favicon.ico'} />
-								<Text>{article.title}</Text>
+								<WebIcon src={favicon} />
+								<Text>{title}</Text>
 							</HistoryItem>
 						);
 					})}
@@ -148,21 +145,37 @@ const HistoryPopover = ({ articles, setSelectedArticle, isVisible }) => {
 	);
 };
 
-const Header = ({ setSelectedArticle }) => {
+const SettingsPopover = ({ isVisible }) => {
+	if (!isVisible) return null;
+	return (
+		<PopoverWrapper>
+			<SettingsContent>Font Size</SettingsContent>
+		</PopoverWrapper>
+	);
+};
+
+const Header = ({ setSelectedArticle, updateDB, setDBUpdated }) => {
 	const [articles, setArticles] = useState(null);
 	const [isHistoryVisible, setHistoryVisible] = useState(false);
+	const [isSettingsVisible, setSettingsVisible] = useState(false);
 
 	useEffect(() => {
 		async function fetchData() {
 			const response = await IndexedDB.getAll();
 			setArticles(response);
+			setDBUpdated(false);
 		}
 		fetchData();
-	}, [setArticles, setHistoryVisible]);
+	}, [setArticles, setHistoryVisible, updateDB, setDBUpdated]);
 
-	const handleClick = useCallback(() => {
+	const handleHistoryClick = useCallback(() => {
 		setHistoryVisible(!isHistoryVisible);
-	}, [isHistoryVisible]);
+		setSettingsVisible(false);
+	}, [isHistoryVisible, setHistoryVisible]);
+	const handleSettingsClick = useCallback(() => {
+		setSettingsVisible(!isSettingsVisible);
+		setHistoryVisible(false);
+	}, [isSettingsVisible, setSettingsVisible]);
 
 	const handleSelected = useCallback(
 		(e) => {
@@ -176,14 +189,22 @@ const Header = ({ setSelectedArticle }) => {
 		<Nav>
 			<NavbarLogo />
 			<Navbar>
-				<HistoryOption>
-					<Title onClick={handleClick}>History</Title>
+				{/* <NavbarItem>
+					<Title onClick={handleSettingsClick}>Settings</Title>
+					<SettingsPopover
+						articles={articles}
+						setSelectedArticle={handleSelected}
+						isVisible={isSettingsVisible}
+					/>
+				</NavbarItem> */}
+				<NavbarItem>
+					<Title onClick={handleHistoryClick}>History</Title>
 					<HistoryPopover
 						articles={articles}
 						setSelectedArticle={handleSelected}
 						isVisible={isHistoryVisible}
 					/>
-				</HistoryOption>
+				</NavbarItem>
 			</Navbar>
 			<DarkModeToggle />
 		</Nav>

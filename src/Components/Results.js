@@ -28,32 +28,54 @@ const LoadingLabel = styled.span`
 `;
 
 const CardContent = styled.div`
-	padding: 15px 5px 15px 5px;
+	margin: 0px;
 	max-height: 80vh;
 	@media only screen and (max-width: 600px) {
 		max-width: 93vh;
 	}
-	max-width: 80vw;
 	display: flex;
 	flex-direction: column;
 	color: ${(props) => props.theme.text};
 	background-color: ${(props) => props.theme.backgroundDarker};
 	transition: background-color 0.2s linear;
 	position: relative;
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+`;
+const CardTextContent = styled.div`
+	margin: 0px 5px 15px 5px;
 `;
 const CardHeader = styled.div`
 	display: flex;
 	align-items: center;
 	border-bottom: 1px solid ${(props) => props.theme.greyLight};
 	margin: 0px 30px;
-	padding: 0px 0px 15px;
+	flex-direction: column;
+	padding: 10px 0px;
 	justify-content: center;
+`;
+
+const ArticleDesciption = styled.p`
+	padding: 5px 0px;
+	font-style: italic;
+	color: grey;
+	margin-bottom: 0;
+	text-align: center;
+`;
+
+const MetaData = styled.p`
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	color: grey;
+	margin: 0;
+	padding: 5px 0px 0px;
 `;
 const CardBody = styled.div`
 	display: flex;
 	flex-direction: column;
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
+	font-family: heebo, sans-serif;
+	font-weight: 400;
 	@media only screen and (max-width: 600px) {
 		max-height: 70vh;
 	}
@@ -73,6 +95,10 @@ const ModalAnimation = styled.div`
 			transform: translateY(0);
 		}
 	}
+	width: 80%;
+	@media only screen and (max-width: 400px) {
+		width: 100%;
+	}
 	z-index: 0;
 	transform: scale(1);
 	animation: moveUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
@@ -89,18 +115,15 @@ const Text = styled.p`
 
 const ArticleTitle = styled.span`
 	text-align: center;
-`;
-const ReadingTime = styled.span`
-	position: absolute;
-	right: 20px;
-	cursor: pointer;
-	color: ${(props) => props.theme.darkText};
-	&:hover::before {
-		content: 'Original article  ';
-		color: ${(props) => props.theme.text};
-	}
-	&:hover {
-		color: ${(props) => props.theme.text};
+	font-weight: 700;
+	clear: both;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	font-size: 38px;
+	line-height: 48px;
+	@media only screen and (max-width: 400px) {
+		font-size: 30px;
+		line-height: 40px;
 	}
 `;
 
@@ -144,12 +167,9 @@ const joinArticleTextLines = (article) => {
 	const newStructure = [];
 	const textArray = article.text.split('.');
 	const filteredSentences = textArray.filter((sentence) => {
-		console.log(sentence.trim().length);
 		return sentence.trim().length > 1;
-		return sentence !== '';
 	});
-	console.log({ filteredSentences });
-	console.log({ text: article.text.split('\n\n') });
+
 	const newArray = article.summary.map((p) => p.trim());
 	for (let i = 0; i < filteredSentences.length; i++) {
 		if (newArray.includes(filteredSentences[i].trim()))
@@ -159,7 +179,11 @@ const joinArticleTextLines = (article) => {
 	let itemsToDelete = [];
 	for (let i = 0; i < newStructure.length; i++) {
 		let prevI = i;
-		while (!newStructure[i].isSummary && !newStructure[i + 1]?.isSummary) {
+		while (
+			newStructure[i] &&
+			!newStructure[i].isSummary &&
+			!newStructure[i + 1]?.isSummary
+		) {
 			newStructure[prevI].text += `.\n\n ${newStructure[i + 1]?.text}`;
 			itemsToDelete.push(i + 1);
 			i++;
@@ -180,15 +204,11 @@ const ArticleText = ({ article }) => {
 	});
 };
 
-const Results = ({
-	isLoading,
-	article = {},
-	summaryError,
-	handleTimeClick
-}) => {
+const Results = ({ isLoading, article = {}, summaryError }) => {
+	const { summary, minutesSaved, title, description, top_image } = article;
 	return (
 		<ResultsWrapper>
-			{isLoading && !article.summary && !summaryError && (
+			{isLoading && !summary && !summaryError && (
 				<LoadingWrapper>
 					<GridLoader color={'yellow'} />
 					<LoadingLabel>
@@ -197,19 +217,21 @@ const Results = ({
 				</LoadingWrapper>
 			)}
 			{summaryError && <div>{summaryError}</div>}
-			{article.summary && (
+			{summary && (
 				<ModalAnimation>
 					<Card>
 						<CardContent>
-							<CardHeader>
-								<ArticleTitle>{article && article.title}</ArticleTitle>
-								<ReadingTime onClick={handleTimeClick}>
-									{/* {summaryReadingTime} */}
-								</ReadingTime>
-							</CardHeader>
-							<CardBody>
-								<ArticleText article={article} />
-							</CardBody>
+							<img width='100%' src={top_image} />
+							<CardTextContent>
+								<CardHeader>
+									<ArticleTitle>{title}</ArticleTitle>
+									<ArticleDesciption>{description}</ArticleDesciption>
+									<MetaData>{minutesSaved} minutes saved</MetaData>
+								</CardHeader>
+								<CardBody>
+									<ArticleText article={article} />
+								</CardBody>
+							</CardTextContent>
 						</CardContent>
 					</Card>
 				</ModalAnimation>

@@ -1,2 +1,0 @@
-sanic==19.12.2
-newspaper3k==0.2.8

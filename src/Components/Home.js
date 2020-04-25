@@ -16,12 +16,19 @@ const HomeWrapper = styled.div`
 
 const getAverageReadingTime = (words) => {
 	const WPM = 200;
-	const averageReadingTime = words.length / WPM;
+	const averageReadingTime = words / WPM;
 	const minutes = Math.ceil(averageReadingTime);
-	return `${minutes} min`;
+	return minutes;
 };
 
-const Home = ({ article, setArticle }) => {
+const getTimeSaved = (summary, text) => {
+	const summaryWords = summary.split(' ').length;
+	const textWords = text.split(' ').length;
+	const wordSaved = textWords - summaryWords;
+	return getAverageReadingTime(wordSaved);
+};
+
+const Home = ({ article, setArticle, setDBUpdated }) => {
 	const urlInputRef = useRef(null);
 	const [isLoading, setLoading] = useState(false);
 	const [summaryError, setSummaryError] = useState(null);
@@ -30,19 +37,42 @@ const Home = ({ article, setArticle }) => {
 		const urlValue = urlInputRef.current.value;
 		setLoading(true);
 		const response = await API(urlValue);
-		const { summary, error, text, title, image, ...rest } = response;
+		const {
+			summary,
+			error,
+			text,
+			title,
+			meta_img,
+			top_image,
+			meta_description,
+			meta_favicon
+		} = response;
+
 		setLoading(false);
 		if (error) return setSummaryError(error);
 
+		const minutesSaved = getTimeSaved(summary, text);
 		IndexedDB.saveArticle({
 			summary: summary.split('.'),
 			text,
+			description: meta_description,
+			favicon: meta_favicon,
 			title,
-			image,
-			url: urlValue
+			top_image,
+			image: meta_img,
+			url: urlValue,
+			minutesSaved
 		});
-
-		setArticle({ summary: summary.split('.'), text, title });
+		setDBUpdated(true);
+		setArticle({
+			summary: summary.split('.'),
+			text,
+			title,
+			minutesSaved,
+			description: meta_description,
+			top_image,
+			image: meta_img
+		});
 	};
 
 	const handleKeyDown = useCallback(
@@ -59,14 +89,6 @@ const Home = ({ article, setArticle }) => {
 		setArticle({});
 		setSummaryError(null);
 		setLoading(null);
-	}, []);
-
-	useEffect(() => {
-		const urlValue =
-			'https://techcrunch.com/2020/04/21/8-top-fintech-vcs-discuss-covid-19-trends-signals-and-opportunities/';
-		axios.get(urlValue).then((res) => {
-			console.log(res);
-		});
 	}, []);
 
 	return (
