@@ -38,5 +38,12 @@ const getAll = async () => {
 	});
 	return await articlesDB.articles.toArray();
 };
+const deleteItem = async (id) => {
+	const articlesDB = new Dexie('articlesDB');
+	articlesDB.version(1).stores({
+		articles: schema
+	});
+	return await articlesDB.articles.delete(id);
+};
 
-export default { saveArticle, getAll };
+export default { saveArticle, getAll, deleteItem };

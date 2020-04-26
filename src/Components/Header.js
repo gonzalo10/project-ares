@@ -1,11 +1,21 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import LogoBase from '../assets/sword.svg';
 import styled from 'styled-components';
+
+import LogoBase from '../assets/sword.svg';
+import binSVG from '../assets/bin.svg';
 import DarkModeToggle from './Toggle';
 import IndexedDB from '../helpers/IndexedDB';
 
 const Logo = styled.img`
 	width: 35px;
+`;
+const BinIcon = styled.img`
+	width: 15px;
+	margin: auto;
+	opacity: 0;
+	&:hover {
+		opacity: 1;
+	}
 `;
 
 const Nav = styled.div`
@@ -59,6 +69,8 @@ const NavbarItem = styled.div`
 
 const PopoverWrapper = styled.div`
 	position: absolute;
+	max-height: 60vh;
+	overflow: auto;
 	right: 0;
 	top: 40px;
 	z-index: 1;
@@ -100,11 +112,11 @@ const Navbar = styled.div`
 `;
 const HistoryItem = styled.div`
 	display: grid;
-	grid-template-columns: 1fr 4fr;
+	grid-template-columns: 3fr 10fr 1fr;
 	justify-content: center;
 	align-items: center;
 	font-size: 14px;
-	padding: 8px 20px;
+	padding: 8px 5px 8px 0px;
 	cursor: pointer;
 	&:hover {
 		background: ${(props) => props.theme.background};
@@ -121,7 +133,12 @@ const NavbarLogo = () => {
 	);
 };
 
-const HistoryPopover = ({ articles, setSelectedArticle, isVisible }) => {
+const HistoryPopover = ({
+	articles,
+	setSelectedArticle,
+	deleteArticle,
+	isVisible
+}) => {
 	if (!isVisible) return null;
 	return (
 		<PopoverWrapper>
@@ -137,6 +154,15 @@ const HistoryPopover = ({ articles, setSelectedArticle, isVisible }) => {
 								}}>
 								<WebIcon src={favicon} />
 								<Text>{title}</Text>
+								<BinIcon
+									src={binSVG}
+									onClick={(e) => {
+										e.stopPropagation();
+										deleteArticle(id);
+
+										console.log(id);
+									}}
+								/>
 							</HistoryItem>
 						);
 					})}
@@ -176,6 +202,13 @@ const Header = ({ setSelectedArticle, updateDB, setDBUpdated }) => {
 		setSettingsVisible(!isSettingsVisible);
 		setHistoryVisible(false);
 	}, [isSettingsVisible, setSettingsVisible]);
+	const deleteArticle = useCallback(
+		(id) => {
+			IndexedDB.deleteItem(id);
+			setDBUpdated(true);
+		},
+		[setDBUpdated, setSettingsVisible]
+	);
 
 	const handleSelected = useCallback(
 		(e) => {
@@ -203,6 +236,7 @@ const Header = ({ setSelectedArticle, updateDB, setDBUpdated }) => {
 						articles={articles}
 						setSelectedArticle={handleSelected}
 						isVisible={isHistoryVisible}
+						deleteArticle={deleteArticle}
 					/>
 				</NavbarItem>
 			</Navbar>
